@@ -1,4 +1,4 @@
-module github.com/gosuit/gin
+module github.com/gosuit/gins
 
 go 1.24.0
 
