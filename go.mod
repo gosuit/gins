@@ -4,9 +4,9 @@ go 1.24.0
 
 require (
 	github.com/gin-gonic/gin v1.10.0
-	github.com/gosuit/e v1.0.2
-	github.com/gosuit/lec v1.0.3
-	github.com/gosuit/sl v1.0.4
+	github.com/gosuit/e v1.0.4
+	github.com/gosuit/lec v1.0.4
+	github.com/gosuit/sl v1.0.5
 )
 
 require (
