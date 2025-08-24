@@ -4,31 +4,29 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gosuit/lec"
+	"github.com/gosuit/c"
 	"github.com/gosuit/sl"
 )
 
 const (
-	// Key used to store the lec.Context in the gin.Context
-	CtxKey = "lec-ctx"
+	// Key used to store the c.Context in the gin.Context
+	CtxKey = "ctx"
 )
 
 // InitLogger initializes a logger middleware for Gin.
 // It logs the request details and duration after the request is completed.
-// It also set lec.Context to gin.Context.
-func InitLogger(c lec.Context) gin.HandlerFunc {
-	log := c.Logger()
+// It also set c.Context to gin.Context.
+func InitLogger(ctx c.Context) gin.HandlerFunc {
+	log := ctx.Logger()
 
 	log.Info("logger middleware enabled.")
 
-	return func(c *gin.Context) {
-		ctx := lec.New(log)
+	return func(ginCtx *gin.Context) {
+		ginCtx.Set(CtxKey, c.New(log))
 
-		c.Set(CtxKey, ctx)
+		req := ginCtx.Request
 
-		req := c.Request
-
-		c.Next()
+		ginCtx.Next()
 		entry := log.With(
 			sl.StringAttr("method", req.Method),
 			sl.StringAttr("path", req.URL.Path),
@@ -39,26 +37,24 @@ func InitLogger(c lec.Context) gin.HandlerFunc {
 		t1 := time.Now()
 		defer func() {
 			entry.Info("request completed",
-				sl.IntAttr("status", c.Writer.Status()),
+				sl.IntAttr("status", ginCtx.Writer.Status()),
 				sl.StringAttr("duration", time.Since(t1).String()),
 			)
 		}()
 	}
 }
 
-// GetCtx retrieves the lec.Context from the Gin context.
+// GetCtx retrieves the c.Context from the Gin context.
 // If no context is found, it returns a new with default Logger.
-func GetCtx(c *gin.Context) lec.Context {
-	if c, ok := c.Get(CtxKey); ok {
-		return c.(lec.Context)
+func GetCtx(ginCtx *gin.Context) c.Context {
+	if ctx, ok := ginCtx.Get(CtxKey); ok {
+		return ctx.(c.Context)
 	}
 
-	return lec.New(sl.Default())
+	return c.New(sl.Default())
 }
 
-// GetL retrieves the logger from the lec.Context stored in the Gin context.
-func GetL(c *gin.Context) sl.Logger {
-	ctx := GetCtx(c)
-
-	return ctx.Logger()
+// GetL retrieves the logger from the c.Context stored in the Gin context.
+func GetL(ginCtx *gin.Context) sl.Logger {
+	return GetCtx(ginCtx).Logger()
 }

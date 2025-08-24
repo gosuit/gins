@@ -8,16 +8,14 @@ import (
 // Abort handles errors by logging them and responding with an appropriate JSON error message.
 // It checks the error code and logs a specific message based on the type of error.
 func Abort(c *gin.Context, err e.Error) {
-	log := GetL(c)
-
-	if err.GetCode() == e.Internal {
-		err.Log("Something going wrong...")
+	if err.GetStatus() == e.Internal {
+		GetL(c).Error("Something going wrong", err.SlErr())
 	} else {
-		log.Info("Invalid input data")
+		GetL(c).Info("Invalid input data", err.SlErr())
 	}
 
 	c.AbortWithStatusJSON(
-		err.ToHttpCode(),
+		err.GetHttpCode(),
 		err.ToJson(),
 	)
 }

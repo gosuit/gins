@@ -1,6 +1,8 @@
 # GinSuit
 
-GinSuit is a Go library designed to simplify logging and error handling in your Gin web applications. It integrates seamlessly with the e, lec and sl libraries to provide structured logging and context management.
+GinSuit is a Go library designed to simplify logging and error handling in your Gin web applications. 
+
+It use the e, c and sl libraries to provide structured logging and context management and error handling.
 
 ## Installation
 
@@ -21,13 +23,13 @@ go get github.com/gosuit/gins
 ```golang
 import (
     "github.com/gin-gonic/gin"
-    "github.com/gosuit/lec"
+    "github.com/gosuit/c"
     "github.com/gosuit/sl"
     "github.com/gosuit/gins"
 )
 
 func main() {
-    ctx := lec.New(sl.Default())
+    ctx := c.New(sl.Default())
 
     r := gin.New()
 
